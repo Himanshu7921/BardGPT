@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "BardGPT: A Decoder-Only Shakespeare-Style Language Model Trained From Scratch"
+message: "If you use BardGPT in your research, software, or publications, please cite this work."
+type: software
+
+authors:
+  - family-names: "Singh"
+    given-names: "Himanshu"
+    affiliation: "Independent Researcher"
+    email: "himanshusr451tehs@gmail.com"
+
+repository-code: "https://github.com/Himanshu7921/BardGPT"
+url: "https://github.com/Himanshu7921/BardGPT"
+
+version: "1.0.0"
+date-released: "2025-01-15"
+
+abstract: >
+  BardGPT is a compact, research-grade, decoder-only Transformer trained 
+  from scratch on the Tiny Shakespeare corpus. It provides a transparent, 
+  extensible architecture for studying GPT-style models, including causal 
+  self-attention, sinusoidal positional embeddings, AdamW optimization, 
+  warmup+cosine scheduling, and full checkpoint reproducibility.
+
+keywords:
+  - GPT
+  - Transformer
+  - Decoder-only model
+  - Shakespeare
+  - Character-level modeling
+  - Language modeling
+  - Deep learning
+  - PyTorch
+
+license: "MIT"
