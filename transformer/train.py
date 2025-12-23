@@ -8,7 +8,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 
-def load_data(address="tiny_shakespeare.txt"):
+def load_data(address="./data/tiny_shakespeare.txt"):
     config = TransformerConfig()
     loader = DataLoader(dataset_address=address, seq_length=config.seq_length)
     return loader, config
