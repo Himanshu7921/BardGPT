@@ -143,11 +143,11 @@ The DataLoader performs:
 ---
 
 # **6. Training**
-
 Run training from scratch:
+To maintain consistent path resolution semantics, invoke the training script from the project root:
 
 ```
-python train.py
+python transformer/train.py
 ```
 
 The training loop implements:
@@ -174,9 +174,9 @@ checkpoints/final_*.pt
 # **7. Sampling**
 
 To sample from a trained checkpoint:
-
+Sampling must be invoked from the root-level working directory to ensure correct relative path resolution:
 ```
-python sample.py
+python transformer/sample.py
 ```
 
 The script:
