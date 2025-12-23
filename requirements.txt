@@ -1,0 +1,8 @@
+numpy>=1.23
+torch>=2.0
+sentencepiece>=0.1.99
+jupyter>=1.0
+ipykernel>=6.0
+matplotlib>=3.7
+tensorflow
+tensorboard
