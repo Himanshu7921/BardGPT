@@ -4,7 +4,7 @@ from utils import TransformerConfig, causal_mask, DataLoader, generate, print_mo
 from model import DecoderOnlyTransformerModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-def load_data(address="tiny_shakespeare.txt"):
+def load_data(address="./data/tiny_shakespeare.txt"):
     config = TransformerConfig()
     loader = DataLoader(dataset_address=address, seq_length=config.seq_length)
     return loader, config
