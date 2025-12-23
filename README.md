@@ -1,6 +1,3 @@
-
-
-
 # **BardGPT**
 
 > A decoder-only Shakespeare-style language model trained from scratch with modern Transformer techniques.
