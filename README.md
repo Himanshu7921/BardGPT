@@ -2,6 +2,9 @@
 
 > A decoder-only Shakespeare-style language model trained from scratch with modern Transformer techniques.
 
+The full documentation website for BardGPT lives in `docs/bardgpt-docs`.  
+You can view the rendered site here: [BardGPT](https://bard-gpt.vercel.app/)
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-3.x-red.svg)]()
 [![GPU Accelerated](https://img.shields.io/badge/Acceleration-GPU-green.svg)]()
