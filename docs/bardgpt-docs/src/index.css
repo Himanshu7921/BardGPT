@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark documentation theme - inspired by Vercel/Stripe docs */
+    --background: 220 16% 6%;
+    --foreground: 210 20% 92%;
+
+    --card: 220 16% 8%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 220 16% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 220 16% 6%;
+
+    --secondary: 220 16% 14%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 220 14% 12%;
+    --muted-foreground: 215 16% 55%;
+
+    --accent: 199 75% 42%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 220 14% 16%;
+    --input: 220 14% 16%;
+    --ring: 199 89% 48%;
+
+    --radius: 0.5rem;
+
+    /* Custom tokens for documentation */
+    --code-bg: 220 16% 10%;
+    --code-border: 220 14% 18%;
+    --sidebar-bg: 220 16% 5%;
+    --header-bg: 220 16% 6%;
+    --header-border: 220 14% 12%;
+    --link: 199 89% 58%;
+    --link-hover: 199 89% 68%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+
+    /* Sidebar specific */
+    --sidebar-background: 220 16% 5%;
+    --sidebar-foreground: 215 16% 65%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 220 16% 6%;
+    --sidebar-accent: 220 16% 12%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 14% 14%;
+    --sidebar-ring: 199 89% 48%;
+  }
+
+  .dark {
+    --background: 220 16% 6%;
+    --foreground: 210 20% 92%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl leading-tight;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl leading-tight;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl leading-snug;
+  }
+
+  /* Code styling */
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    @apply text-sm;
+  }
+
+  pre {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    @apply text-sm leading-relaxed;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+}
+
+@layer components {
+  /* Documentation specific components */
+  .doc-prose {
+    @apply text-foreground/90 leading-relaxed;
+  }
+
+  .doc-prose p {
+    @apply mb-4;
+  }
+
+  .doc-prose ul, .doc-prose ol {
+    @apply mb-4 pl-6;
+  }
+
+  .doc-prose li {
+    @apply mb-2;
+  }
+
+  .doc-prose ul li {
+    @apply list-disc;
+  }
+
+  .doc-prose ol li {
+    @apply list-decimal;
+  }
+
+  .doc-prose a {
+    @apply text-primary hover:text-primary/80 underline underline-offset-2 transition-colors;
+  }
+
+  .doc-prose code:not(pre code) {
+    @apply bg-muted px-1.5 py-0.5 rounded text-primary/90;
+  }
+
+  .doc-prose pre {
+    @apply bg-[hsl(var(--code-bg))] border border-[hsl(var(--code-border))] rounded-lg p-4 overflow-x-auto mb-4;
+  }
+
+  .doc-prose h2 {
+    @apply mt-10 mb-4 pb-2 border-b border-border;
+  }
+
+  .doc-prose h3 {
+    @apply mt-8 mb-3;
+  }
+
+  .doc-prose h4 {
+    @apply mt-6 mb-2 text-lg font-medium;
+  }
+
+  /* API Reference styling */
+  .api-table {
+    @apply w-full text-sm;
+  }
+
+  .api-table th {
+    @apply text-left font-medium text-muted-foreground py-2 px-3 bg-muted/50 first:rounded-tl-lg last:rounded-tr-lg;
+  }
+
+  .api-table td {
+    @apply py-3 px-3 border-b border-border;
+  }
+
+  .api-table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* Sidebar navigation */
+  .sidebar-link {
+    @apply block py-1.5 px-3 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md;
+  }
+
+  .sidebar-link.active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .sidebar-group-title {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-2 px-3;
+  }
+
+  /* Code block with title */
+  .code-block-wrapper {
+    @apply rounded-lg overflow-hidden border border-[hsl(var(--code-border))] mb-4;
+  }
+
+  .code-block-title {
+    @apply bg-muted px-4 py-2 text-xs font-medium text-muted-foreground border-b border-[hsl(var(--code-border))];
+  }
+
+  /* Callout boxes */
+  .callout {
+    @apply border rounded-lg p-4 mb-4;
+  }
+
+  .callout-info {
+    @apply bg-primary/5 border-primary/20;
+  }
+
+  .callout-warning {
+    @apply bg-[hsl(var(--warning))]/5 border-[hsl(var(--warning))]/20;
+  }
+
+  .callout-tip {
+    @apply bg-[hsl(var(--success))]/5 border-[hsl(var(--success))]/20;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .badge-secondary {
+    @apply bg-secondary text-secondary-foreground;
+  }
+
+  /* Feature cards */
+  .feature-card {
+    @apply bg-card border border-border rounded-xl p-6 hover:border-primary/30 transition-colors;
+  }
+
+  /* Hero gradient */
+  .hero-gradient {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.15), transparent);
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
