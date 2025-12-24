@@ -1,3 +1,6 @@
 runs/
 checkpoints/
 __pycache__/
+# Utilities for Tracking Folder Structures
+generate_file_structure.py
+structure.txt
