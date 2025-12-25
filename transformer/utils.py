@@ -4,6 +4,19 @@ from dataclasses import dataclass
 
 @dataclass
 class TransformerConfig:
+    """
+    Configuration settings for the Transformer model architecture.
+
+    Attributes:
+        vocab_size (int): Size of the character dictionary.
+        d_model (int): The number of expected features in the encoder/decoder inputs.
+        d_ff (int): The dimension of the feedforward network model.
+        n_layers (int): Number of sub-decoder-layers in the transformer.
+        n_heads (int): Numbers of heads in the multiheadattention models.
+        dropout (float): The dropout value.
+        seq_length (int): Length of sequences used during training.
+        max_seq_length (int): The absolute maximum position for embeddings.
+    """
     vocab_size: int = 65 # we can get this value by loading the data and get len(chars) | self.chars = sorted(list(set(text)))
     d_model: int = 384
     d_ff: int = 4 * d_model # Original Paper used d_ff as 4 * d_model
@@ -31,6 +44,19 @@ def load_checkpoint(
     optimizer = None,
     scheduler = None
 ):
+    """
+    Loads a model and its training state from a saved checkpoint.
+
+    Args:
+        path (str): Path to the checkpoint file.
+        model_class (Type): The class to instantiate the model from.
+        device (torch.device): The device (CPU/GPU) to load the model onto.
+        optimizer (torch.optim.Optimizer, optional): Optimizer to load state into.
+        scheduler (torch.optim.lr_scheduler, optional): Scheduler to load state into.
+
+    Returns:
+        tuple: (model, optimizer, scheduler, checkpoint_dict)
+    """
     checkpoint = torch.load(path, map_location=device, weights_only=False)
 
     config = checkpoint["config"]
@@ -72,6 +98,17 @@ def save_checkpoint(
     step: int = 0,
     path: str = "checkpoint.pt"
 ):
+    """
+    Saves the model state and training metdata to a file.
+
+    Args:
+        model (torch.nn.Module): The model instance to be saved.
+        optimizer (torch.optim.Optimizer, optional): The current optimizer state.
+        schedular (torch.optim.lr_schedular, optional): The learning rate schedular.
+        config (TransformerConfig, optional): The configuration used to build the model.
+        step (int): The current training step/epoch number.
+        path (str): The destination file path.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     checkpoint = {
@@ -89,6 +126,13 @@ def save_checkpoint(
 
 
 def print_model_summary(config: TransformerConfig, model):
+    """
+    Prints a formatted report of the model architecture and parameters.
+
+    Args:
+        config (TransformerConfig): The configuration object for the model.
+        model (torch.nn.Module): The instantiated Transformer model.
+    """
     print("=" * 144)
     print("                                                 Decoder-Only Transformer Model Summary")
     print("=" * 144)
@@ -134,11 +178,34 @@ def print_model_summary(config: TransformerConfig, model):
     print("=" * 144)
 
 def checkpoint_name(prefix="step", step=0):
+    """
+    Generates a standardized filename for saving model checkpoints.
+
+    Args:
+        prefix (str): The starting string for the filename.
+        step (int): The current training step to be included in the name.
+
+    Returns:
+        str: A formatted string such as 'step_0000100.pt'.  
+    """
     return f"{prefix}_{step:07d}.pt"
 
 
 class DataLoader:
+    """
+    A simple character-level data loader for the text files.
+
+    This class handles reading the dataset, creating a character-to-integer mapping, 
+    and generating batches for training or validation.
+    """
     def __init__(self, dataset_address: str = "tiny_shakespeare.txt", *, seq_length: int):
+        """
+        Initializes the DataLoader with a specific dataset.
+
+        Args:
+            dataset_address (str): The local path to the text file.
+            seq_length (int): The window size for each training sequences.
+        """
         text = open(dataset_address, 'r', encoding='utf-8').read()
 
         self.chars = sorted(list(set(text)))
@@ -153,6 +220,17 @@ class DataLoader:
         self.val_data = data[n:]
 
     def get_batch(self, split='train', batch_size = 64, *, device: torch.device):
+        """
+        Retrieves a random batch of inputs (X) and targets (Y).
+
+        Args:
+            split (str): Either 'train' or 'val' to select the data subset.
+            batch_size (int): Number of independent sequences per batch.
+            device (torch.device): Device to which the returned tensors are moved.
+
+        Returns:
+            tuple: (X, Y) where X is the context and Y is the target (next character).
+        """
         assert split in ("train", "val")
         source = self.train_data if split == 'train' else self.val_data
         ix = torch.randint(len(source) - self.seq_length - 1, (batch_size,))
@@ -162,6 +240,16 @@ class DataLoader:
 
 
 def top_k_logits(logits: torch.Tensor, k: int):
+    """
+    Filters a distribution of logits using top-k sampling.
+
+    Args:
+        logits (torch.Tensor): The output scores from the model's last layer.
+        k (int): The number of highest probability vocabulary tokens to keep.
+
+    Returns:
+        torch.Tensor: Logits with values outside the top-k set to negative infinity.
+    """
     k = min(k, logits.size(-1))
     if k <= 0:
         return logits
@@ -171,6 +259,18 @@ def top_k_logits(logits: torch.Tensor, k: int):
     return torch.where(logits < min_values, torch.full_like(logits, -1e9), logits)
 
 def top_p_logits(logits: torch.Tensor, p: float):
+    """
+    Performs Nucleus (Top-P) filtering on the logits.
+
+    This limits the sampling to the smallest set of tokens whose cumulative probability exceeds the threshold p.
+
+    Args:
+        logits (torch.Tensor): The output scores from the model.
+        p (float): The cumulative probability threshold (0 to 1).
+
+    Returns:
+        torch.Tensor: The filtered logits with non-selected values set to -inf.
+    """
     sorted_logits, sorted_indices = torch.sort(logits, descending=True)
     probs = torch.softmax(sorted_logits, dim=-1)
 
@@ -197,6 +297,21 @@ def generate(
     top_k=None,
     top_p=None,
 ):
+    """
+    Generates a sequence of tokens from a starting context.
+
+    Args:
+        model (torch.nn.Module): The trained transformer model.
+        idx (torch.Tensor): Starting sequence of token indices (shape [B,T]).
+        max_new_tokens (int): How many tokens to generate.
+        device (torch.device): Device to perform computation on.
+        temperature (float): Scaling factor for the logits (higher = more random).
+        top_k (int, optional): If set, only sample from the top k tokens.
+        top_p (float, optional): If set, perform Nucleus sampling.
+
+    Returns:
+        torch.Tensor: The sequence including the newly generated tokens. 
+    """
     model.eval()
     # max_T = model.embeddings.pos_embedding.max_seq_length // 2 # 256//2 = 128
     max_T = TransformerConfig.seq_length # 256//2 = 128

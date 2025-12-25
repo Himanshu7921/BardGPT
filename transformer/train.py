@@ -9,6 +9,15 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 def load_data(address="./data/tiny_shakespeare.txt"):
+    """
+    Initializes the configuration and data loader for the training session.
+
+    Args:
+        address (str): File path to the source dataset text file.
+
+    Returns:
+        tuple: (DataLoader instance, TransformerConfig instances)
+    """
     config = TransformerConfig()
     loader = DataLoader(dataset_address=address, seq_length=config.seq_length)
     return loader, config
@@ -23,6 +32,27 @@ def train_model(model: DecoderOnlyTransformerModel,
             print_interval: int,
             config: TransformerConfig,
             device: torch.device):
+    """
+    Executes the main training loop for the Transformer model.
+
+    This function handles forward passes, backpropagation, metric logging via SummaryWriter,
+    and implements early stopping based on validation loss.
+
+    Args:
+        model: The instantiated GPT-style transformer.
+        dataloader: The helper class providing training and validation batches.
+        batch_size: Number of sequences per training step.
+        steps: Total number of iteratiions to train for.
+        scheduler: Learning rate scheduler for optimization.
+        optimizer: The PyTorch optimizer (e.g., AdamW).
+        loss_fn: The criterion used to calculate model error.
+        print_interval: Frequency of console updates and checkpointing.
+        config: Architecture settings used for the model.
+        device: The hardware (CPU/GPU) to run training on.
+
+    Returns:
+        DecoderOnlyTransformerModel: The trained model after completion or early stopping.
+    """
     model.train()
     best_val_loss = float("inf")
     bad_steps = 0
@@ -149,6 +179,15 @@ if __name__ == "__main__":
     min_lr_scale = 3e-5 / 3e-4  # = 0.1
 
     def lr_lambda(step):
+        """
+        Calculates the learning rate scaling factor for a warm-up and decay schedule.
+
+        Args:
+            step: The current training step.
+
+        Returns:
+            float: The multiplier for the base learning rate.
+        """
         if step < warmup_steps:
             return step / warmup_steps
 

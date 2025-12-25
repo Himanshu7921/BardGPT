@@ -5,6 +5,15 @@ from model import DecoderOnlyTransformerModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def load_data(address="./data/tiny_shakespeare.txt"):
+    """
+    Initializes the model configuration and the data loading utility.
+
+    Args:
+        address (str): The local file path to the text dataset.
+
+    Returns:
+        tuple: A tuple containing the (DataLoader, TransformerConfig ).
+    """
     config = TransformerConfig()
     loader = DataLoader(dataset_address=address, seq_length=config.seq_length)
     return loader, config
